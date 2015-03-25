@@ -64,4 +64,15 @@
 --10. Find the routes involving two buses that can go from Craiglockhart to Sighthill.
 	 -- Show the bus no. and company for the first bus, the name of the stop for the transfer,
 	 -- and the bus no. and company for the second bus.
-	 		
+		 	SELECT DISTINCT first_ride.num, first_ride.company, name, second_ride.num, second_ride.company 
+		 	FROM 
+		 		(SELECT a.num, a.company, b.stop 
+		 		 FROM route a JOIN route b ON (a.num = b.num AND a.company = b.company)
+				 WHERE a.stop = (SELECT id FROM stops WHERE name = 'Craiglockhart')) AS first_ride 
+		 	JOIN 
+		 		(SELECT c.num, c.company, c.stop 
+		 		 FROM route c JOIN route d ON (c.num = d.num AND c.company = d.company)
+		 		 WHERE d.stop = (SELECT id FROM stops WHERE name = 'Sighthill')) AS second_ride 
+		 	ON (first_ride.stop = second_ride.stop)
+		 	JOIN stops
+ 		 	ON (first_ride.stop = stops.id)
